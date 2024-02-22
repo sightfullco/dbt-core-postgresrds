@@ -1622,18 +1622,27 @@ def generate_runtime_unit_test_context(
     if unit_test.overrides and unit_test.overrides.macros:
         for macro_name, macro_value in unit_test.overrides.macros.items():
             macro_name_split = macro_name.split(".")
-            macro_package = macro_name_split[0] if len(macro_name_split) == 2 else "dbt"
+            macro_package = macro_name_split[0] if len(macro_name_split) == 2 else None
             macro_name = macro_name_split[-1]
 
+            # macro overrides of global macros
+            if macro_package is None and macro_name in ctx_dict:
+                original_context_value = ctx_dict[macro_name]
+                if isinstance(original_context_value, MacroGenerator):
+                    macro_value = UnitTestMacroGenerator(original_context_value, macro_value)
+
+                ctx_dict[macro_name] = macro_value
+
+                if macro_package is None and ctx_dict["dbt"].get(macro_name):
+                    ctx_dict["dbt"][macro_name] = macro_value
+
+            # macro overrides of package-namespaced macros
             if macro_package in ctx_dict and macro_name in ctx_dict[macro_package]:
                 original_context_value = ctx_dict[macro_package][macro_name]
                 if isinstance(original_context_value, MacroGenerator):
                     macro_value = UnitTestMacroGenerator(original_context_value, macro_value)
 
-            ctx_dict[macro_package][macro_name] = macro_value
-            # override global project macros at the top-level in addition to under ctx_dict['dbt']
-            if macro_package == "dbt":
-                ctx_dict[macro_name] = macro_value
+                ctx_dict[macro_package][macro_name] = macro_value
 
     return ctx_dict
 
