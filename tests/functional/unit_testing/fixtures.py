@@ -272,7 +272,7 @@ unit_tests:
     model: my_incremental_model
     overrides:
       macros:
-        is_incremental: false
+        dbt.is_incremental: false
     given:
       - input: ref('events')
         rows:
