@@ -1,0 +1,6 @@
+kind: Fixes
+body: Add field wrapper to BaseRelation members that were missing it.
+time: 2024-02-26T21:58:42.161273-08:00
+custom:
+  Author: versusfacit
+  Issue: "9681"
