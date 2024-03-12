@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 from contextlib import nullcontext
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union, Set
 
 from dbt.compilation import Compiler
 import dbt_common.exceptions.base
@@ -480,3 +480,26 @@ class BaseRunner(metaclass=ABCMeta):
     def do_skip(self, cause=None):
         self.skip = True
         self.skip_cause = cause
+
+
+def resource_types_from_args(
+    args, default_resource_values: Set[str], all_resource_values: Set[str]
+) -> Set:
+
+    if not args.resource_types:
+        resource_types = default_resource_values
+    else:
+        resource_types = set(args.resource_types)
+
+        if "all" in resource_types:
+            resource_types.remove("all")
+            resource_types.update(all_resource_values)
+        if "default" in resource_types:
+            resource_types.remove("default")
+            resource_types.update(default_resource_values)
+
+    if args.exclude_resource_types:
+        exclude_resource_types = set(args.exclude_resource_types)
+        resource_types = resource_types - exclude_resource_types
+
+    return resource_types
