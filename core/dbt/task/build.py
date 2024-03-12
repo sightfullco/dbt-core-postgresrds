@@ -81,13 +81,17 @@ class BuildTask(RunTask):
 
     def resource_types(self, no_unit_tests=False):
         if not self.args.resource_types:
-            resource_types = list(self.ALL_RESOURCE_VALUES)
+            resource_types = set(self.ALL_RESOURCE_VALUES)
         else:
             resource_types = set(self.args.resource_types)
 
             if "all" in resource_types:
                 resource_types.remove("all")
                 resource_types.update(self.ALL_RESOURCE_VALUES)
+
+        if self.args.exclude_resource_types:
+            exclude_resource_types = set(self.args.exclude_resource_types)
+            resource_types = resource_types - exclude_resource_types
 
         # First we get selected_nodes including unit tests, then without,
         # and do a set difference.

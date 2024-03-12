@@ -50,7 +50,10 @@ class TestUnitTests:
         results = run_dbt(["test", "--select", "my_model"], expect_pass=False)
         assert len(results) == 5
 
-        results = run_dbt(["build", "--select", "my_model"], expect_pass=False)
+        results = run_dbt(
+            ["build", "--select", "my_model", "--resource-types", "model unit_test"],
+            expect_pass=False,
+        )
         assert len(results) == 6
         for result in results:
             if result.node.unique_id == "model.test.my_model":
