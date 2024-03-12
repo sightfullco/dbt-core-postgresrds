@@ -483,7 +483,7 @@ class BaseRunner(metaclass=ABCMeta):
 
 
 def resource_types_from_args(
-    args, default_resource_values: Set[str], all_resource_values: Set[str]
+    args, all_resource_values: Set[str], default_resource_values: Set[str]
 ) -> Set:
 
     if not args.resource_types:
