@@ -66,6 +66,7 @@ setup(
         "{}~=2.8".format(DBT_PSYCOPG2_NAME),
         # installed via dbt-core, but referenced directly, don't pin to avoid version conflicts with dbt-core
         "agate",
+        "boto3"
     ],
     zip_safe=False,
     classifiers=[
